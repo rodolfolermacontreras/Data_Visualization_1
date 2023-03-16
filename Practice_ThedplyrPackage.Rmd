@@ -1,0 +1,49 @@
+---
+title: Practice on the dplyr package
+author: {put your name here}
+output:   
+  html_notebook
+---
+
+###Importing Data
+- To import a csv file in R, we use the read.csv funcion.
+- The data file is available on Canvas as well as on Kaggle
+- Before importing, please make sure your working directory is set to the folder which holds the avocado.csv file is. Else, you will need to provide the address of the avocado.csv file.
+```{r}
+avocado<-read.csv("avocado.csv", header=TRUE)
+```
+
+
+###Look at the data structure
+```{r message=FALSE}
+library(dplyr)
+str(avocado)
+```
+
+###Select all rows where AveragePrice of Avocado is greater than 1.6 
+```{r}
+#write your code here
+
+```
+###Report whether organic avocado sells more in terms of Total.Volume than conventional avocado
+```{r}
+#write your code here
+
+```
+###Report the regions where organic avocado sells more then conventional avocado in terms of Total.Volume
+```{r}
+#write your code here
+```
+
+###Report the Average Total.Volume by AveragePrice quantiles of 7 for conventional and organic avacado  
+```{r}
+#write your code here
+```
+###Report in which regions with highest number of bags of avocado sold by bag size and year.
+```{r}
+#write your code here
+```
+
+
+
+

@@ -1,0 +1,94 @@
+---
+title: Introduction to the dplyr package
+author: Prof. Param Vir Singh
+output:   
+  html_notebook
+---
+
+###Agenda
+
+- Importing data
+- Look at the data structure
+- Filtering (Select Subset of rows from a dataframe)
+- Reorder rows of a dataframe: arrange()
+- Rename a Variable: rename()
+- Compute transformations but retain only the transformed variable: transmute()
+- Generate summary statistics by grouping: group_by
+- String together multiple function: The pipe operator %>%
+
+
+###Importing Data
+- To import a csv file in R, we use the read.csv funcion.
+- The data file is available on Canvas as well as on Kaggle
+- Before importing, please make sure your working directory is set to the folder which hold the avocado.csv file is. Else, you will need to provide the address of the avocado.csv file.
+```{r}
+avocado<-read.csv("avocado.csv", header=TRUE)
+```
+
+
+###Look at the data structure
+```{r message=FALSE}
+library(dplyr)
+str(avocado)
+```
+
+###Select subset of rows from a data frame: filter()
+```{r}
+filter(avocado,Date=="2015-01-04")
+```
+```{r}
+#filtering with more complex condition
+filter(avocado,Date=="2015-01-04" & region=="Albany" )
+```
+###Reorder rows of a dataframe: arrange()
+```{r}
+avocado_p <- arrange(avocado,AveragePrice)
+#looking at the top three rows of avocado_p
+head(avocado_p,3)
+```
+
+```{r}
+#looking at the bottom three rows of avocado_p
+tail(avocado_p,3)
+```
+```{r}
+#arrange in descending order by Date
+avocado_d <- arrange(avocado,desc(Date))
+head(avocado_d,3)
+tail(avocado_d,3)
+```
+###Rename a Variable: rename()
+```{r}
+avocado <- rename(avocado,TotalVolume=Total.Volume)
+str(avocado)
+```
+###Compute transformations or calculate a derived variable in a data frame: mutate()
+```{r}
+avocado <- mutate(avocado,price_detrend=AveragePrice-mean(AveragePrice))
+head(avocado,6)
+```
+###Compute transformations but retain only the transformed variable: transmute()
+```{r}
+
+test <- transmute(avocado, volume_detrend=TotalVolume-mean(TotalVolume))
+head(test,6)
+
+```
+###Generate summary statistics by grouping: group_by
+```{r}
+test <- group_by(avocado,year)
+summarize(test, mean(AveragePrice), mean(TotalVolume), mean(X4046), mean(X4225), mean(X4770))
+```
+###String together multiple function: The pipe operator %>%
+```{r} 
+
+#calculate the Mean Total Volume by quantiles of AveragePrice
+qq <- quantile(avocado$AveragePrice, seq(0,1,0.2))
+mutate(avocado,price_quantile=cut(AveragePrice,qq,include.lowest = TRUE)) %>%
+  group_by(price_quantile) %>%
+    summarize(mean(TotalVolume)) 
+
+
+```
+
+ 
