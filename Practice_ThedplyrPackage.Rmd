@@ -1,7 +1,7 @@
 ---
 title: Practice on the dplyr package
-author: {put your name here}
-output:   
+author: Rodolfo Lerma
+output: Questions/Answers
   html_notebook
 ---
 
@@ -17,31 +17,60 @@ avocado<-read.csv("avocado.csv", header=TRUE)
 ###Look at the data structure
 ```{r message=FALSE}
 library(dplyr)
+library(tidyr)
 str(avocado)
+```
+
+```{r}
+head(avocado)
 ```
 
 ###Select all rows where AveragePrice of Avocado is greater than 1.6 
 ```{r}
 #write your code here
-
+filter(avocado,AveragePrice > 1.6)
 ```
 ###Report whether organic avocado sells more in terms of Total.Volume than conventional avocado
 ```{r}
 #write your code here
-
+test <- group_by(avocado,type)
+summarize(test, sum(Total.Volume))
 ```
+
 ###Report the regions where organic avocado sells more then conventional avocado in terms of Total.Volume
 ```{r}
-#write your code here
+avocado_summary <- avocado %>% 
+  group_by(region, type) %>% 
+  summarize(TotalVolume = sum(Total.Volume), .groups = 'drop') %>% 
+  pivot_wider(names_from = type, values_from = TotalVolume) %>% 
+  filter(organic > conventional)
+
+avocado_summary
 ```
 
 ###Report the Average Total.Volume by AveragePrice quantiles of 7 for conventional and organic avacado  
 ```{r}
-#write your code here
+avocado %>% 
+  group_by(type) %>% 
+  mutate(PriceQuantile = ntile(AveragePrice, 7)) %>% 
+  group_by(type, PriceQuantile) %>% 
+  summarize(AvgTotalVolume = mean(Total.Volume))
+
 ```
 ###Report in which regions with highest number of bags of avocado sold by bag size and year.
 ```{r}
-#write your code here
+avocado %>% 
+  mutate(Year = as.factor(format(as.Date(Date, "%Y-%m-%d"), "%Y"))) %>% 
+  group_by(region, Year) %>% 
+  summarize(
+    SmallBagsTotal = sum(Small.Bags),
+    LargeBagsTotal = sum(Large.Bags),
+    XLargeBagsTotal = sum(XLarge.Bags)) %>% 
+  pivot_longer(
+    cols = -c(region, Year),
+    names_to = "BagSize",
+    values_to = "TotalBags") %>% 
+  arrange(desc(TotalBags))
 ```
 
 
